@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="gl">
+<head>
+    <meta charset="UTF-8">
+<!--    <link rel="shortcut icon" href="{% static 'reganosa_16x16.ico' %}">-->
+    {% load bootstrap4 %}
+    {# CSS bootstrap   #}
+    {% bootstrap_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/loader.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    {% block head %}
+        <title>Base</title>
+        {# Cargamos la libreria   #}
+    {% endblock %}
+    {% block extrahead %}
+    {% endblock %}
+</head>
+<body>
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'app:index' %}">
+            <img class="img-fluid d-inline-block align-top" src="{% static 'UOC_logo.png' %}"
+                 width="60" height="50" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="">Sanky Diagrams</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<div class="container-fluid">
+    <div id="hide_work" class="pb-1 mt-2 mb-1 border-bottom">
+        <h4>Data Visualization: <small id="hide_work_file">  </small></h4>
+    </div>
+    {% block body_block %}
+        {#  Anything outside of this will be inherited if you extended! #}
+    {% endblock %}
+
+    {% block table_content %}
+        {#  Anything outside of this will be inherited if you extended! #}
+    {% endblock %}
+
+</div>
+{# JS y jQuery Bootstrap#}
+{% bootstrap_javascript jquery='full' %}
+
+{% block javascript %}
+
+{% endblock %}
+</body>
+</html>

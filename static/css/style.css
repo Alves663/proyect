@@ -1,0 +1,32 @@
+body {
+    color: #506784;
+    background: linear-gradient(
+            rgba(255, 255, 255, 0.6),
+            rgba(255, 255, 255, 0.6)
+    ),
+    url("https://github.com/plotly/dash-docs/raw/master/images/dash-pattern.png");
+    margin: 0px;
+}
+
+.asteriskField {
+    display: none;
+}
+
+.nav-link[data-toggle].collapsed:before {
+    content: " ▾";
+}
+
+.nav-link[data-toggle]:not(.collapsed):before {
+    content: " ▴";
+}
+
+.ownbox {
+    box-sizing: border-box;
+    border: #cdcdcd thin solid;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.form-control {
+    width: 100%;
+}
