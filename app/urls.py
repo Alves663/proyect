@@ -6,5 +6,5 @@ app_name = 'app'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('bokeh', views.bokeh, name='bokeh'),
+    path('compradores_vendedores', views.compradores_vendedores, name='compradores_vendedores'),
 ]

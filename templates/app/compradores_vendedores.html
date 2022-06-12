@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% extends "app/base.html" %}
+{% load static %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+{% endblock %}
+{% load bootstrap4 %}
+{# CSS bootstrap   #}
+{% bootstrap_css %}
+{% block head %}
+    <title>Comp-Vend</title>
+{% endblock %}
+{% block body_block %}
+    <div id="hide_work" class="pb-1 mt-2 mb-1 border-bottom">
+        <h4>Distribución de los compradores y vendedores de Olist en Brasil: <small id="hide_work_file">  </small></h4>
+    </div>
+    <div class="row">
+     <div class="col-sm">
+    <div class="modal-body row">
+     <div id="loading" class="loader"></div>
+        <div id="carp-map" class="card" >
+         {{div_cosumidores| safe}}
+        </div>
+        </div>
+    </div>
+        <div class="col-sm">
+        <div class="modal-body row">
+     <div id="loading" class="loader"></div>
+        <div id="carp-map" class="card" >
+         {{div_vendedores| safe}}
+        </div>
+    </div>
+         </div>
+    </div>
+    {# JS y jQuery Bootstrap#}
+    {% bootstrap_javascript jquery='full' %}
+{% endblock %}
+
+{% block javascript %}
+  {{script| safe}}
+{% endblock %}
