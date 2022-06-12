@@ -45,6 +45,7 @@ class OlistData(object):
         geolocation.rename(columns={"geolocation_zip_code_prefix": "zip_code",
                                     "geolocation_city": "city", "geolocation_state": "state"}, inplace=True)
         # Removing some outliers
+
         # Brazils most Northern spot is at 5 deg 16′ 27.8″ N latitude.;
         geolocation = geolocation[geolocation.geolocation_lat <= 5.27438888]
         # it’s most Western spot is at 73 deg, 58′ 58.19″W Long.
