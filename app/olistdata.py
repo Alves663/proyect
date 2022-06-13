@@ -13,6 +13,7 @@ class OlistData(object):
             self.orders = self.__read_orders()
             self.products = pd.read_csv("data/olist_products_dataset.csv")
             self.orders_payments = pd.read_csv("data/olist_order_payments_dataset.csv")
+            self.order_reviews = pd.read_csv('data/olist_order_reviews_dataset.csv')
             self.sellers = self.__read_sellers()
             self.costumer = self.__read_costumer()
             self.geolocation = self.__read_geolocation()
@@ -23,6 +24,7 @@ class OlistData(object):
             self.orders = self.__read_orders(frac=self.percentage_of_rows)
             self.products = pd.read_csv("data/olist_products_dataset.csv").sample(frac=self.percentage_of_rows)
             self.orders_payments = pd.read_csv("data/olist_order_payments_dataset.csv").sample(frac=self.percentage_of_rows)
+            self.order_reviews = pd.read_csv('data/olist_order_reviews_dataset.csv').sample(frac=self.percentage_of_rows)
             self.sellers = self.__read_sellers(frac=self.percentage_of_rows)
             self.costumer = self.__read_costumer(frac=self.percentage_of_rows)
             self.geolocation = self.__read_geolocation(frac=self.percentage_of_rows)
@@ -135,6 +137,54 @@ class OlistData(object):
         top_products_by_costumer = orders_items_by_costumer.merge(costumer_location, on=["customer_id"])
         return top_products_by_costumer.groupby(["product_id", "zip_code", "city", "state", "x", "y"]).sum()[
             "order_item_id"].sort_values(ascending=False).reset_index()
+
+    def get_incomes(self):
+        orders_df = self.orders
+        order_items = self.orders_items
+        order_reviews = self.order_reviews
+        customer = pd.read_csv('data/olist_customers_dataset.csv', dtype={'customer_zip_code_prefix': str})
+        # getting the first 3 digits of customer zipcode
+        customer['customer_zip_code_prefix_3_digits'] = customer['customer_zip_code_prefix'].str[0:3]
+        customer['customer_zip_code_prefix_3_digits'] = customer['customer_zip_code_prefix_3_digits'].astype(int)
+
+        geo = pd.read_csv("data/olist_geolocation_dataset.csv", dtype={'geolocation_zip_code_prefix': str})
+        # Removing some outliers
+        #Brazils most Northern spot is at 5 deg 16′ 27.8″ N latitude.;
+        geo = geo[geo.geolocation_lat <= 5.27438888]
+        #it’s most Western spot is at 73 deg, 58′ 58.19″W Long.
+        geo = geo[geo.geolocation_lng >= -73.98283055]
+        #It’s most southern spot is at 33 deg, 45′ 04.21″ S Latitude.
+        geo = geo[geo.geolocation_lat >= -33.75116944]
+        #It’s most Eastern spot is 34 deg, 47′ 35.33″ W Long.
+        geo = geo[geo.geolocation_lng <= -34.79314722]
+
+        x, y = webm(geo.geolocation_lng, geo.geolocation_lat)
+        geo['x'] = pd.Series(x)
+        geo['y'] = pd.Series(y)
+
+        geo['geolocation_zip_code_prefix_1_digits'] = geo['geolocation_zip_code_prefix'].str[0:1]
+        geo['geolocation_zip_code_prefix_2_digits'] = geo['geolocation_zip_code_prefix'].str[0:2]
+        geo['geolocation_zip_code_prefix_3_digits'] = geo['geolocation_zip_code_prefix'].str[0:3]
+        geo['geolocation_zip_code_prefix_4_digits'] = geo['geolocation_zip_code_prefix'].str[0:4]
+
+        # transforming the prefixes to int for plotting purposes
+        geo['geolocation_zip_code_prefix'] = geo['geolocation_zip_code_prefix'].astype(int)
+        geo['geolocation_zip_code_prefix_1_digits'] = geo['geolocation_zip_code_prefix_1_digits'].astype(int)
+        geo['geolocation_zip_code_prefix_2_digits'] = geo['geolocation_zip_code_prefix_2_digits'].astype(int)
+        geo['geolocation_zip_code_prefix_3_digits'] = geo['geolocation_zip_code_prefix_3_digits'].astype(int)
+        geo['geolocation_zip_code_prefix_4_digits'] = geo['geolocation_zip_code_prefix_4_digits'].astype(int)
+
+        brazil_geo = geo.set_index('geolocation_zip_code_prefix_3_digits').copy()
+
+        orders = orders_df.merge(order_items, on='order_id')
+        orders = orders.merge(customer, on='customer_id')
+        orders = orders.merge(order_reviews, on='order_id')
+        gp = orders.groupby('customer_zip_code_prefix_3_digits')['price'].sum().to_frame()
+        revenue = brazil_geo.join(gp)
+
+        revenue["revenue"] = revenue.price / 1000
+        return revenue
+
 
 
 

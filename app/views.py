@@ -22,17 +22,21 @@ def compradores_vendedores(request):
     costumer_distribution = olist_data.get_costumer_distribution()
     agg_name_costumer = "customer_id"
     consumidores_img = plot_map(costumer_distribution, "Distribución de los Consumidores", ds.mean(agg_name_costumer), agg_name_costumer,
-                   rainbow).options(height=600, width=600)
+                   rainbow).options(height=600, width=500)
     consumidores_div = renderer.html(consumidores_img)
     #Vendedores
     vendedores_distribution = olist_data.get_seller_distribution()
     agg_name_seller = "seller_id"
     vendedores_img = plot_map(vendedores_distribution, "Distribución de los Vendedores", ds.mean(agg_name_seller),
-             agg_name_seller, rainbow).options(height=600, width=600)
+             agg_name_seller, rainbow).options(height=600, width=500)
     vendedores_div = renderer.html(vendedores_img)
+    revenue = olist_data.get_incomes()
+    agg_name_revenue = 'revenue'
+    revenue = renderer.html(plot_map(revenue, "Ingresos en miles de R$", ds.mean(agg_name_revenue), agg_name_revenue,
+                                     rainbow).options(height=600, width=500))
 
     return render(request, 'app/compradores_vendedores.html',
-                  {'div_cosumidores': consumidores_div, 'div_vendedores': vendedores_div})
+                  {'div_cosumidores': consumidores_div, 'div_vendedores': vendedores_div, 'revenue': revenue})
 
 
 def top_products(request):
@@ -73,8 +77,8 @@ def ajax_top_products(request):
             months[month] = True
 
         top_product_data, top_categories_data = olist_data.product_best_sellers(order_items_sell, n_top=ntop)
-        top_product = renderer.html(plot_bars(top_product_data, title="Top Productos").options(height=600, width=400))
-        top_categories = renderer.html(plot_bars(top_categories_data, title="Top Categorías de Productos").options(height=600, width=400))
+        top_product = renderer.html(plot_bars(top_product_data, title="Top Productos").options(height=600, width=500))
+        top_categories = renderer.html(plot_bars(top_categories_data, title="Top Categorías de Productos").options(height=600, width=500))
         top_products_by_costumer = olist_data.top_products_by_costumer(order_items_sell)
         agg_name_top_products_by_costumer = "order_item_id"
         top_products_by_costumer_img = renderer.html(plot_map(top_products_by_costumer,
