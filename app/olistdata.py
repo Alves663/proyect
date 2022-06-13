@@ -5,7 +5,7 @@ from datashader.utils import lnglat_to_meters as webm
 class OlistData(object):
 
     # percentage_of_rows must be between 0 and 1.
-    percentage_of_rows = None
+    percentage_of_rows = 0.1
 
     def __init__(self):
         if self.percentage_of_rows is None:
