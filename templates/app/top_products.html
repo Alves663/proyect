@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+{% extends "app/base.html" %}
+{% load static %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+{% endblock %}
+{% load bootstrap4 %}
+{# CSS bootstrap   #}
+{% bootstrap_css %}
+{% block head %}
+    <title>Top-Products</title>
+{% endblock %}
+{% block body_block %}
+    <div id="hide_work" class="pb-1 mt-2 mb-1 border-bottom">
+        <h4>Análsis de los productos más vendidos: <small id="hide_work_file">  </small></h4>
+    </div>
+    <div class="modal-body row">
+            <div class="col-sm-3">
+            <div class="ownbox">
+                {% if years %}
+                    <form method="POST" id="post-form">
+                        {% csrf_token %}
+                     <div class="form-check">
+                        <label> Seleccione un Año:
+                            <select id="select_year" class="form-control" name="year" data-url="{% url 'app:ajax_top_products' %}">
+                              {% for years, selected in years.items %}
+                                            <option {% if selected %}selected{% endif %}
+                                                    name="{{ elem }}">{{ years }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <label> Seleccione un Mes:
+                            <select id="select_month" class="form-control" name="month" data-url="{% url 'app:ajax_top_products' %}">
+                              {% for month, selected in months.items %}
+                                            <option {% if selected %}selected{% endif %}
+                                                    name="{{ elem }}">{{ month }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <div class="form-outline">
+                            <label class="form-label" for="typeNumber">Numéro de productos</label><br>
+                        <input type="number" id="get_top" min="0" class="form-control" value="10" style="width:30%"><br>
+                    </div>
+                    </div>
+                    <div class="form-check">
+                        <input id="make-map" type="submit" class="btn btn-outline-primary btn-sm" value="Get Product Info" data-url="{% url 'app:ajax_top_products' %}"><br>
+                    </div>
+                    </form><br>
+                {% else %}
+                    <p> NO SE ENCONTRARON DATOS!</p><br>
+                {% endif %}
+             </div>
+             </div>
+
+        <div class="row">
+              <div class="col-sm">
+        <div class="modal-body row">
+     <div id="loading" class="loader"></div>
+        <div id="carp-map-3" class="card" >
+            {{top_products_by_costumer_img| safe}}
+        </div>
+    </div>
+         </div>
+    <div class="row">
+     <div class="col-sm">
+    <div class="modal-body row">
+     <div id="loading" class="loader"></div>
+        <div id="carp-map-1" class="card" >
+            {{top_categories| safe}}
+        </div>
+        </div>
+    </div>
+        <div class="col-sm">
+        <div class="modal-body row">
+     <div id="loading" class="loader"></div>
+        <div id="carp-map-2" class="card" >
+            {{top_products| safe}}
+        </div>
+    </div>
+         </div>
+    </div>
+     </div>
+    </div>
+    {# JS y jQuery Bootstrap#}
+    {% bootstrap_javascript jquery='full' %}
+{% endblock %}
+
+{% block javascript %}
+    {{script| safe}}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock %}

@@ -5,10 +5,9 @@ from datashader.utils import lnglat_to_meters as webm
 class OlistData(object):
 
     # percentage_of_rows must be between 0 and 1.
-    percentage_of_rows = 0.01
+    percentage_of_rows = None
 
     def __init__(self):
-        print(self.percentage_of_rows)
         if self.percentage_of_rows is None:
             self.orders_items = pd.read_csv("data/olist_order_items_dataset.csv")
             self.orders = self.__read_orders()
@@ -29,8 +28,6 @@ class OlistData(object):
             self.geolocation = self.__read_geolocation(frac=self.percentage_of_rows)
             self.costumer_geolocation = self.__costumer_geolocation()
             self.seller_geolocation = self.__seller_geolocation()
-
-        print(self.orders.shape)
 
     @staticmethod
     def __read_orders(frac=None):
@@ -103,6 +100,43 @@ class OlistData(object):
     def get_seller_distribution(self):
         return self.seller_geolocation.groupby(["zip_code", "city",
                                                 "state", "x", "y"]).count()["seller_id"].reset_index()
+
+    def product_buy_by_costumer(self, year=None, month=None):
+        orders_delivered = self.orders[self.orders["order_status"] == "delivered"]
+        products = self.products[["product_id", "product_category_name"]]
+        orders_items = self.orders_items.merge(products, on=["product_id"])
+        orders_delivered_by_costumer = orders_delivered[
+            ['order_id', 'customer_id', 'order_status', "order_delivered_customer_date"]]
+        orders_items = orders_items.merge(orders_delivered_by_costumer, on=['order_id'])
+        orders_items["order_delivered_customer_year"] = orders_items['order_delivered_customer_date'].dt.year
+        orders_items["order_delivered_customer_month"] = orders_items['order_delivered_customer_date'].dt.month
+        if year is None and month is None:
+            return orders_items
+        if year is not None and month is not None:
+            return orders_items[(orders_items["order_delivered_customer_year"] == year) &
+                                (orders_items["order_delivered_customer_month"] == month)]
+        if year is not None and month is None:
+            return orders_items[orders_items["order_delivered_customer_year"] == year]
+
+        if year is None and month is not None:
+            return orders_items[orders_items["order_delivered_customer_month"] == month]
+
+    @staticmethod
+    def product_best_sellers(orders_items_costumer, n_top=None):
+        top_products = orders_items_costumer.groupby(["product_id"]).sum()["order_item_id"].sort_values(ascending=False)
+        top_products_category = orders_items_costumer.groupby(["product_category_name"]).sum()["order_item_id"].sort_values(
+            ascending=False)
+        return top_products.reset_index().head(n_top), top_products_category.reset_index().head(n_top)
+
+    def top_products_by_costumer(self, orders_items_costumer):
+        orders_items_by_costumer = orders_items_costumer.groupby(["product_id", "customer_id"]).sum()[
+            "order_item_id"].sort_values(ascending=False).reset_index()
+        costumer_location = self.__costumer_geolocation()
+        top_products_by_costumer = orders_items_by_costumer.merge(costumer_location, on=["customer_id"])
+        return top_products_by_costumer.groupby(["product_id", "zip_code", "city", "state", "x", "y"]).sum()[
+            "order_item_id"].sort_values(ascending=False).reset_index()
+
+
 
 
 

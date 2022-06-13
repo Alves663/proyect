@@ -14,74 +14,55 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// $('#select_provincia').change(function (e) {
-//     e.preventDefault();
-//     var endpoint = $("#select_provincia").attr("data-url");
-//     console.log(endpoint)
-//     $.ajax({
-//         type: "POST",
-//         url: endpoint,
-//         data: {
-//             provincia: $('#select_provincia').val(),
-//             csrfmiddlewaretoken: getCookie('csrftoken'),
-//             dataType: "json",
-//         },
-//         success: function (data) {
-//             $("#loading").hide()
-//             $("body").html(data)
-//             // $('#output').html(data) /* response message */
-//         },
-//         failure: function () {
-//         }
-//     });
-// });
 
 $('#make-map').click(function (e) {
     e.preventDefault();
     var endpoint = $("#make-map").attr("data-url");
     console.log(endpoint)
-    $("#loading").show()
-    $("#carp-map").hide()
-    $("#carp-icon").hide()
+    // $("#loading").show()
+    // $("#carp-map-1").hide()
+    // $("#carp-map-2").hide()
+    // $("#carp-icon").hide()
     $.ajax({
         type: "POST",
         url: endpoint,
         data: {
-            provincia: $('#select_provincia').val(),
-            year:$('#select_year').val(),
+            year: $('#select_year').val(),
+            month:$('#select_month').val(),
+            ntop: $('#get_top').val(),
             csrfmiddlewaretoken: getCookie('csrftoken'),
             dataType: "json",
         },
         success: function (data) {
-            $("#loading").hide()
+            // $("#loading").hide()
             $("body").html(data)
         },
     });
 });
 
-$('#get-map').click(function (e) {
-    e.preventDefault();
-    var endpoint = $("#get-map").attr("data-url");
-    $.ajax({
-        type: "POST",
-        url: endpoint,
-        data: {
-            file_path: $('#get-map').val(),
-            csrfmiddlewaretoken: getCookie('csrftoken'),
-            dataType: "json",
-            xhrFields: {
-                responseType: 'blob'
-            },
-        },
-        success: function (data) {
-            let a = document.createElement('a');
-            a.download = "sankey.html";
-            a.href = "data:application/octet-stream;base64," + btoa(data);
-            a.click();
-            a.remove();
-        },
-    });
-});
+// $('#get-map').click(function (e) {
+//     e.preventDefault();
+//     var endpoint = $("#get-map").attr("data-url");
+//     $.ajax({
+//         type: "POST",
+//         url: endpoint,
+//         data: {
+//             file_path: $('#get-map').val(),
+//             csrfmiddlewaretoken: getCookie('csrftoken'),
+//             dataType: "json",
+//             xhrFields: {
+//                 responseType: 'blob'
+//             },
+//         },
+//         success: function (data) {
+//             let a = document.createElement('a');
+//             a.download = "sankey.html";
+//             a.href = "data:application/octet-stream;base64," + btoa(data);
+//             a.click();
+//             a.remove();
+//         },
+//     });
+// });
 
 
 

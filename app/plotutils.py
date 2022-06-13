@@ -21,3 +21,11 @@ def plot_map(data, label, agg_data, agg_name, cmap):
     img.opts(opts.QuadMesh(tools=['hover'], colorbar=True, alpha=0, hover_alpha=0.2))
     img.opts(labelled=[])
     return img
+
+
+def plot_bars(data, title='New title for Overlay'):
+    bars = hv.Bars(data)
+    bars.opts(xrotation=35)
+    bars.opts(title=title)
+    bars.opts(labelled=[])
+    return bars
